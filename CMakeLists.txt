@@ -17,6 +17,6 @@ add_library(output ${PROTO_SRCS} ${PROTO_HDRS})
 # target_link_libraries(output PUBLIC ${Protobuf_LIBRARIES})
 
 
-add_executable(${PROJECT_NAME} src/main.cpp src/client.cpp )
+add_executable(${PROJECT_NAME} src/main.cpp src/tcp_client.cpp src/tcp_server.cpp)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_BINARY_DIR} include)
 target_link_libraries(${PROJECT_NAME} output ${Protobuf_LIBRARIES})     
