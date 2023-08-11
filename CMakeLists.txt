@@ -10,13 +10,13 @@ find_package(Protobuf REQUIRED)
 
 
 protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${PROTO_FILE})
-# # # protobuf_generate(TARGET ${PROJECT_NAME} LANGUAGE cpp PROTOS ${PROTO_FILE})
 
-# add_executable(output output.pb.cc ${PROTO_SRCS} ${PROTO_HDRS})
 add_library(output ${PROTO_SRCS} ${PROTO_HDRS})
-# target_link_libraries(output PUBLIC ${Protobuf_LIBRARIES})
 
+add_executable(client src/client_main.cpp src/tcp_client.cpp )
+target_include_directories(client PUBLIC ${CMAKE_CURRENT_BINARY_DIR} include)
+target_link_libraries(client output ${Protobuf_LIBRARIES})     
 
-add_executable(${PROJECT_NAME} src/main.cpp src/tcp_client.cpp src/tcp_server.cpp)
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_BINARY_DIR} include)
-target_link_libraries(${PROJECT_NAME} output ${Protobuf_LIBRARIES})     
+add_executable(server src/server_main.cpp src/tcp_server.cpp)
+target_include_directories(server PUBLIC ${CMAKE_CURRENT_BINARY_DIR} include)
+target_link_libraries(server output ${Protobuf_LIBRARIES})  
