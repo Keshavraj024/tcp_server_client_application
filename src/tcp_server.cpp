@@ -3,9 +3,6 @@
 #include <cstring>
 #include <arpa/inet.h>
 #include <unistd.h>
-#include <thread>
-
-using namespace std::chrono_literals;
 
 TcpServer::TcpServer(const size_t &port)
     : m_port{port}, m_serverSocket{-1}
@@ -19,10 +16,18 @@ TcpServer::~TcpServer()
 
 bool TcpServer::startConnection()
 {
+    std::cout << "Server started, listening for connections " << std::endl;
     m_serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (m_serverSocket == -1)
     {
         std::cerr << "Socket creation failed" << std::endl;
+    }
+
+    const int reuse = 1;
+    if (setsockopt(m_serverSocket, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(int)) == -1)
+    {
+        std::cerr << "Failed to set socket option" << std::endl;
+        return false;
     }
 
     sockaddr_in serverAddr;
@@ -65,38 +70,39 @@ void TcpServer::listenForConnection()
         if (clientSocket == -1)
         {
             std::cerr << "Accept Failed " << std::endl;
+            stopConnection();
+            break;
         }
 
         handleClient(clientSocket);
-        std::this_thread::sleep_for(1s);
     }
 }
 
 void TcpServer::handleClient(const int &clientSocket)
 {
-    char buffer[4096];
+    char buffer[4096] = {0};
 
     while (true)
     {
         int bytesRead = recv(clientSocket, buffer, sizeof(buffer), 0);
         if (bytesRead <= 0)
         {
-            std::cerr << "Client Disconnected" << std::endl;
+            std::cerr << "Client Disconnected  " << std::endl;
+            break;
         }
 
         sr_test::Output receivedMessage;
         if (receivedMessage.ParseFromArray(buffer, bytesRead))
         {
-            std::cout << "Received messagae : ";
+            std::cout << "Received messagae: ";
             std::cout << "ID : " << receivedMessage.id() << std::endl;
-            std::cout << "Timestamp : " << receivedMessage.timestamp().seconds() << receivedMessage.timestamp().nanos() << std::endl;
+            std::cout << "Timestamp : " << receivedMessage.timestamp().seconds() << " s " << receivedMessage.timestamp().nanos() << " ns" << std::endl;
             std::cout << "Content : " << receivedMessage.content() << std::endl;
         }
         else
         {
-            std::cerr << "Received no messaage " << std::endl;
+            std::cerr << "Error in receiving message " << std::endl;
         }
-        
     }
 
     stopConnection();
