@@ -1,24 +1,41 @@
 #ifndef __TCP_CLIENT_H__
 #define __TCP_CLIENT_H__
 
-#include <iostream>
 #include <string>
-#include <ctime>
-#include <sys/socket.h>
-#include <google/protobuf/message.h>
 
+/**
+ * @class TcpClient
+ * @brief Represents a TCP client that connects to a server and sends messages.
+ */
 class TcpClient
 {
 public:
+    /**
+     * @brief Constructor for TcpClient.
+     * @param serverAddress The IP address or hostname of the server to connect to.
+     * @param serverPort The port number of the server to connect to.
+     */
     TcpClient(const std::string &serverAddress, const size_t &serverPort);
+    /**
+     * @brief Destructor for TcpClient.
+     */
     ~TcpClient();
+    /**
+     * @brief Establishes a connection to the server.
+     * @return True if the connection is successful, false otherwise.
+     */
     bool clientConnect();
+    /**
+     * @brief Sends a message to the server.
+     * @param message The message to send.
+     * @return True if the message is sent successfully, false otherwise.
+     */
     bool sendMessage(const std::string &message);
 
 private:
-    int m_clientSocket;
-    std::string m_serverAddress;
-    size_t m_serverPort;
+    int m_clientSocket;          ///< The socket descriptor for the client socket.
+    std::string m_serverAddress; ///< The IP address or hostname of the server.
+    size_t m_serverPort;         ///< The port number of the server.
 };
 
 #endif
