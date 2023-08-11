@@ -1,6 +1,11 @@
-#include "tcp_client.h"
+
+#include <ctime>
+#include <sys/socket.h>
+#include <google/protobuf/message.h>
 #include <arpa/inet.h>
 #include <thread>
+#include <iostream>
+#include "tcp_client.h"
 #include "output.pb.h"
 
 TcpClient::TcpClient(const std::string &serverAddress, const size_t &serverPort)
