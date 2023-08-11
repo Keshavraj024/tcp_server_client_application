@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package sr_test;
+
+message Output {
+  google.protobuf.Timestamp timestamp = 1;
+  uint32 id = 2;
+  string content = 3;
+}
