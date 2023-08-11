@@ -13,7 +13,7 @@ public:
     TcpClient(const std::string &serverAddress, const size_t &serverPort);
     ~TcpClient();
     bool clientConnect();
-    bool sendMessage(const google::protobuf::Message &message);
+    bool sendMessage(const std::string &message);
 
 private:
     int m_clientSocket;

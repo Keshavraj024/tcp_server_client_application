@@ -1,5 +1,7 @@
 #include "tcp_client.h"
 #include <arpa/inet.h>
+#include <thread>
+#include "output.pb.h"
 
 TcpClient::TcpClient(const std::string &serverAddress, const size_t &serverPort)
     : m_clientSocket{-1}, m_serverAddress{serverAddress}, m_serverPort{serverPort}
@@ -43,22 +45,26 @@ bool TcpClient::clientConnect()
     return true;
 }
 
-bool TcpClient::sendMessage(const google::protobuf::Message &message)
+bool TcpClient::sendMessage(const std::string &messageToSend)
 {
-    std::string messageToSend = message.SerializeAsString();
     size_t messageSize = messageToSend.size();
 
-    if (send(m_clientSocket, &messageSize, sizeof(int), 0) == -1)
-    {
-        std::cerr << "Failed to send message size " << std::endl;
-        return false;
-    }
+    // @TODO Causing Delay
+    // if (send(m_clientSocket, &messageSize, sizeof(int), 0) == -1)
+    // {
+    //     std::cerr << "Failed to send message size " << std::endl;
+    //     return false;
+    // }
 
     if (send(m_clientSocket, messageToSend.c_str(), messageSize, 0) == -1)
     {
         std::cerr << "Failed to send message " << std::endl;
         return false;
     }
+
+    // send(m_clientSocket, messageToSend.c_str(), messageSize, 0);
+
+    std::cout << "!!!MESSSAGE SENT " << std::endl;
 
     return true;
 }
