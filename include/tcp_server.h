@@ -36,8 +36,9 @@ public:
     void listenForConnection();
 
 private:
-    size_t m_port;      ///< The port number to listen on.
-    int m_serverSocket; ///< The socket descriptor for the server socket.
+    size_t m_port;               ///< The port number to listen on.
+    int m_serverSocket;          ///< The socket descriptor for the server socket.
+    bool m_endConnection{false}; ///< Flag to indicate whether the server should end its connection loop.
 
     /**
      * @brief Handles communication with a connected client.

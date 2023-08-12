@@ -47,7 +47,6 @@ bool TcpServer::startConnection()
         return false;
     }
 
-    listenForConnection();
     return true;
 }
 
@@ -57,12 +56,13 @@ void TcpServer::stopConnection()
     {
         close(m_serverSocket);
         m_serverSocket = -1;
+        m_endConnection = false;
     }
 }
 
 void TcpServer::listenForConnection()
 {
-    while (true)
+    while (!m_endConnection)
     {
         sockaddr_in clientAddr;
         socklen_t clientAddrSize = sizeof(clientAddr);
@@ -70,8 +70,7 @@ void TcpServer::listenForConnection()
         if (clientSocket == -1)
         {
             perror("Accept Failed ");
-            stopConnection();
-            break;
+            m_endConnection = true;
         }
 
         handleClient(clientSocket);
@@ -82,13 +81,13 @@ void TcpServer::handleClient(const int &clientSocket)
 {
     char buffer[4096] = {0};
 
-    while (true)
+    while (!m_endConnection)
     {
         int bytesRead = recv(clientSocket, buffer, sizeof(buffer), 0);
         if (bytesRead <= 0)
         {
             perror("Client Disconnected ");
-            break;
+            m_endConnection = true;
         }
 
         sr_test::Output receivedMessage;
