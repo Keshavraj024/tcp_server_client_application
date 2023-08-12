@@ -9,6 +9,7 @@ set(PROTO_FILE_NAME ${CMAKE_CURRENT_SOURCE_DIR}/output.proto)
 
 find_package(Protobuf REQUIRED)
 find_package(yaml-cpp REQUIRED)
+find_package(GTest REQUIRED)
 
 get_filename_component(FILE_NAME ${PROTO_FILE_NAME} NAME_WE)
 
@@ -21,12 +22,22 @@ EXEC_PROGRAM(${EXECUTE_PROTOBUF_COMMAND})
 
 set(PROTO_SRCS ${CPP_PATH_OUT}/${FILE_NAME}.pb.cc)
 set(PROTO_HDRS ${CPP_PATH_OUT}/${FILE_NAME}.pb.h)
+enable_testing()
 
-add_executable(client src/client_main.cpp src/tcp_client.cpp ${PROTO_SRCS} ${PROTO_HDRS} )
-target_include_directories(client PUBLIC ${CMAKE_CURRENT_BINARY_DIR} include)
-target_link_libraries(client ${Protobuf_LIBRARIES} yaml-cpp)     
+function(add_my_executable TARGET_NAME SOURCES USE_GTEST)
+    add_executable(${TARGET_NAME} ${SOURCES} ${PROTO_SRCS} ${PROTO_HDRS} )
+    target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_BINARY_DIR} include)
+    target_link_libraries(${TARGET_NAME} ${Protobuf_LIBRARIES} yaml-cpp)
+    if(USE_GTEST)
+        target_link_libraries(${TARGET_NAME} ${GTEST_BOTH_LIBRARIES})
+    endif()
+endfunction()
 
-add_executable(server src/server_main.cpp src/tcp_server.cpp ${PROTO_SRCS} ${PROTO_HDRS})
-target_include_directories(server PUBLIC ${CMAKE_CURRENT_BINARY_DIR} include)
-target_link_libraries(server ${Protobuf_LIBRARIES} yaml-cpp) 
- 
+add_my_executable(client "src/client_main.cpp;src/tcp_client.cpp" False)
+add_my_executable(server "src/server_main.cpp;src/tcp_server.cpp" False)
+add_my_executable(test_tcp_server "test/test_tcp_server.cpp;src/tcp_server.cpp" True)
+add_my_executable(test_tcp_client "test/test_tcp_client.cpp;src/tcp_client.cpp" True)
+
+include(GoogleTest)
+gtest_discover_tests(test_tcp_client)
+gtest_discover_tests(test_tcp_server)
