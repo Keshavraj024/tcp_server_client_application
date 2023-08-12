@@ -1,0 +1,6 @@
+server:
+  address: "127.0.0.1"
+  port: 8080
+interval: 5
+max_attempts: 5
+message_interval_ms: 100

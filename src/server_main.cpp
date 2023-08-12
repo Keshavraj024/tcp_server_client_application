@@ -1,29 +1,34 @@
 #include "tcp_server.h"
 #include <iostream>
 #include <thread>
-
-using namespace std::chrono_literals;
-
-constexpr int PORT = 8080;
-constexpr int MAX_ATTEMPTS = 5;
-constexpr std::chrono::seconds INTERVAL{5s};
+#include <fstream>
+#include <yaml-cpp/yaml.h>
 
 int main()
 {
+    YAML::Node config = YAML::LoadFile("../config.yaml");
+    if (!config.IsDefined())
+    {
+        std::cerr << "Error reading config file " << '\n';
+        return 1;
+    }
+    const int serverPort = config["server"]["port"].as<int>();
+    const int interval = config["interval"].as<int>();
+    const int maxAttempts = config["max_attempts"].as<int>();
 
     int reconnectAttempts = 0;
 
-    while (reconnectAttempts < MAX_ATTEMPTS)
+    while (reconnectAttempts < maxAttempts)
     {
-        TcpServer server(PORT);
+        TcpServer server(serverPort);
         if (server.startConnection())
         {
             server.listenForConnection();
         }
         else
         {
-            std::cerr << "Server failed to start, reconnecting in " << INTERVAL.count() << " seconds" << std::endl;
-            std::this_thread::sleep_for(INTERVAL);
+            std::cerr << "Server failed to start, reconnecting in " << interval << " seconds" << std::endl;
+            std::this_thread::sleep_for(std::chrono::seconds{interval});
             ++reconnectAttempts;
         }
     }

@@ -26,7 +26,7 @@ bool TcpClient::clientConnect()
     m_clientSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (m_clientSocket < 0)
     {
-        std::cerr << "Socket Connection Failed " << std::endl;
+        perror("Socket Connection Failed");
         return false;
     }
     sockaddr_in serverAddr;
@@ -35,7 +35,7 @@ bool TcpClient::clientConnect()
 
     if (inet_pton(AF_INET, m_serverAddress.c_str(), &serverAddr.sin_addr) <= 0)
     {
-        std::cerr << "Invalid Address or address not supported " << std::endl;
+        perror("Invalid Address or address not supported");
         close(m_clientSocket);
         return false;
     }
@@ -54,22 +54,9 @@ bool TcpClient::sendMessage(const std::string &messageToSend)
 {
     size_t messageSize = messageToSend.size();
 
-    // @TODO Causing Delay
-    // if (send(m_clientSocket, &messageSize, sizeof(int), 0) == -1)
-    // {
-    //     std::cerr << "Failed to send message size " << std::endl;
-    //     return false;
-    // }
-
     if (send(m_clientSocket, messageToSend.c_str(), messageSize, 0) == -1)
     {
-        std::cerr << "Failed to send message " << std::endl;
         return false;
     }
-
-    // send(m_clientSocket, messageToSend.c_str(), messageSize, 0);
-
-    std::cout << "!!!MESSSAGE SENT " << std::endl;
-
     return true;
 }
