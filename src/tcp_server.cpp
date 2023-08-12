@@ -27,6 +27,7 @@ bool TcpServer::startConnection()
     if (setsockopt(m_serverSocket, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(int)) == -1)
     {
         perror("Failed to set socket option");
+        stopConnection();
         return false;
     }
 
@@ -38,12 +39,14 @@ bool TcpServer::startConnection()
     if (bind(m_serverSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) == -1)
     {
         perror("Binding failed");
+        stopConnection();
         return false;
     }
 
     if (listen(m_serverSocket, 5) == -1)
     {
         perror("Listening failed ");
+        stopConnection();
         return false;
     }
 
