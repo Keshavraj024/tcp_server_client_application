@@ -3,3 +3,4 @@ build
 python_client/__pycache__
 python_client/output_pb2.py
 __pycache__
+venv
