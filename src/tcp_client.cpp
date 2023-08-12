@@ -56,6 +56,7 @@ bool TcpClient::sendMessage(const std::string &messageToSend)
 
     if (send(m_clientSocket, messageToSend.c_str(), messageSize, 0) == -1)
     {
+        close(m_clientSocket);
         return false;
     }
     return true;

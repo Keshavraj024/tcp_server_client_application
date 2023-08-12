@@ -4,8 +4,6 @@
 #include <yaml-cpp/yaml.h>
 #include "output.pb.h"
 
-
-
 bool waitForServer(const std::unique_ptr<TcpClient> &client, const size_t &maxAttempts, const int &interval)
 {
     for (size_t attempt = 0; attempt < maxAttempts; attempt++)
