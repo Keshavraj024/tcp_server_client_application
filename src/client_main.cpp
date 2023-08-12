@@ -28,16 +28,10 @@ int main()
     std::unique_ptr<TcpClient>
         tcpClient = std::make_unique<TcpClient>(SERVER_ADDRESS, PORT);
 
-    constexpr int MAX_ATTEMPTS = 5;
     auto INTERVAL = std::chrono::seconds{5};
-    if (!waitForServer(tcpClient, MAX_ATTEMPTS, INTERVAL))
-    {
-        return 1;
-    }
     size_t messageId = 0;
     while (true)
     {
-        std::cout << "Message Created " << std::endl;
         sr_test::Output out;
         out.set_id(++messageId);
 
@@ -52,20 +46,20 @@ int main()
         timestampProto->set_nanos(timestamp);
 
         const std::string content = "Hello, Seoul Robotics ";
-
-        std::cout << "Message content " << content << std::endl;
-
         out.set_content(content);
 
         const std::string messageToSend = out.SerializeAsString();
 
-        if (!tcpClient->sendMessage(messageToSend))
+        while (!tcpClient->sendMessage(messageToSend))
         {
-            return 1;
+            std::cerr << "Failed to send message. Reconnecting..." << std::endl;
+            if (!waitForServer(tcpClient, MAX_ATTEMPTS, INTERVAL))
+            {
+                std::cerr << "Server not reachable. Exiting..." << std::endl;
+                return 1;
+            }
         }
-
         std::cout << "Message sent " << std::endl;
-        std::this_thread::sleep_for(1s);
-        // std::cout << "Waiting done " << std::endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }
