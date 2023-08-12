@@ -20,13 +20,13 @@ bool TcpServer::startConnection()
     m_serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (m_serverSocket == -1)
     {
-        std::cerr << "Socket creation failed" << std::endl;
+        perror("Socket creation failed");
     }
 
     const int reuse = 1;
     if (setsockopt(m_serverSocket, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(int)) == -1)
     {
-        std::cerr << "Failed to set socket option" << std::endl;
+        perror("Failed to set socket option");
         return false;
     }
 
@@ -37,13 +37,13 @@ bool TcpServer::startConnection()
 
     if (bind(m_serverSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) == -1)
     {
-        std::cerr << "Binding failed" << std::endl;
+        perror("Binding failed");
         return false;
     }
 
     if (listen(m_serverSocket, 5) == -1)
     {
-        std::cerr << "Listening failed " << std::endl;
+        perror("Listening failed ");
         return false;
     }
 
@@ -69,7 +69,7 @@ void TcpServer::listenForConnection()
         int clientSocket = accept(m_serverSocket, (struct sockaddr *)&clientAddr, &clientAddrSize);
         if (clientSocket == -1)
         {
-            std::cerr << "Accept Failed " << std::endl;
+            perror("Accept Failed ");
             stopConnection();
             break;
         }
@@ -87,7 +87,7 @@ void TcpServer::handleClient(const int &clientSocket)
         int bytesRead = recv(clientSocket, buffer, sizeof(buffer), 0);
         if (bytesRead <= 0)
         {
-            std::cerr << "Client Disconnected  " << std::endl;
+            perror("Client Disconnected ");
             break;
         }
 
