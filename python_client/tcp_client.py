@@ -13,10 +13,15 @@ class TcpClient:
             config = self.read_config(file_path)
             server_address = config["server"]["address"]
             server_port = config["server"]["port"]
+            self.message_interval_ms = config["message_interval_ms"]
+
+            # end index to slice the message at for variable lengths
+            self.end_index = 0
             self.message_to_send = config["message_to_send"]
             self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.client_socket.connect((server_address, server_port))
             self.send()
+
         except socket.error as e:
             logging.error(f"Error during initialization: {e}")
 
@@ -56,7 +61,10 @@ class TcpClient:
         timestamp.nanos = nanoseconds
         sr_test_output.timestamp.CopyFrom(timestamp)
 
-        sr_test_output.content = self.message_to_send
+        if self.end_index == len(self.message_to_send):
+            self.end_index = 0
+        sr_test_output.content = self.message_to_send[0 : self.end_index]
+        self.end_index += 1
 
         sr_test_output_serialized = sr_test_output.SerializeToString()
 
@@ -70,14 +78,16 @@ class TcpClient:
         """
         Send the client to send messages.
         """
-        message_id = 1
+        message_id = 0
         while True:
             try:
                 message_data = self.create_message(message_id)
+                message_size = len(message_data)
+                self.client_socket.sendall(message_size.to_bytes(8, byteorder="little"))
                 self.client_socket.sendall(message_data)
                 logging.info(f"Sent message with ID: {message_id}")
                 message_id += 1
-                time.sleep(0.1)
+                time.sleep(self.message_interval_ms / 1000)
             except socket.error as e:
                 self.client_socket.close()
                 logging.error(f"Error while sending message: {e}")
