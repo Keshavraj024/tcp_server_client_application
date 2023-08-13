@@ -31,6 +31,14 @@ public:
      * @return True if the message is sent successfully, false otherwise.
      */
     bool sendMessage(const std::string &message);
+    /**
+     * Generates a message using the given message ID and content.
+     * The message will be formatted as a string containing both the message ID and content.
+     *
+     * @param messageId The unique identifier for the message.
+     * @param content The content of the message to be included.
+     * @return A string representing the created message with the message ID and content.
+     */
     std::string createMessage(size_t messageId, const std::string &content);
 
 private:
