@@ -2,15 +2,17 @@
 #include <arpa/inet.h>
 #include <thread>
 #include <yaml-cpp/yaml.h>
+#include "utils.cpp"
 #include "output.pb.h"
 
-int main()
+int main(int argc, const char *argv[])
 {
+    const char *defaultFileName = "../config.yaml";
+    const char *fileName = (argc > 1) ? argv[1] : defaultFileName;
 
-    YAML::Node config = YAML::LoadFile("../config.yaml");
-    if (!config.IsDefined())
+    auto config = Utils::readConfig(fileName);
+    if (not config)
     {
-        std::cerr << "Error reading config file " << '\n';
         return 1;
     }
     const std::string serverAddress = config["server"]["address"].as<std::string>();

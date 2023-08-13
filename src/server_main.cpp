@@ -4,13 +4,17 @@
 #include <fstream>
 #include <yaml-cpp/yaml.h>
 #include <memory>
+#include "utils.cpp"
 
-int main()
+int main(int argc, const char *argv[])
 {
-    YAML::Node config = YAML::LoadFile("../config.yaml");
-    if (!config.IsDefined())
+
+    const char *defaultFileName = "../config.yaml";
+    const char *fileName = (argc > 1) ? argv[1] : defaultFileName;
+
+    auto config = Utils::readConfig(fileName);
+    if (not config)
     {
-        std::cerr << "Error reading config file " << '\n';
         return 1;
     }
     const int serverPort = config["server"]["port"].as<int>();
