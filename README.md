@@ -76,10 +76,29 @@ You can also establish a heterogeneous connection using a Python client. An exam
    pip install -r requirements.txt
    ```
 
-3. Run the Python client script:
+3. Run the Python client script (configurations specific to this task):
    ```sh
-   python3 tcp_client.py --file_path ../config.yaml
+   python3 tcp_client.py 
    ```
+
+4. Run the Python client script (with user-defined configurations):
+   
+   - configure the yaml file(config.yaml):
+      ```
+      server:
+         address (str): The IP address the server should bind to.
+         port (int): The port number on which the server will listen.
+      interval (int): Time interval in seconds for periodic tasks.
+      max_attempts (int): Maximum number of connection attempts.
+      message_interval_ms (int): Interval in milliseconds between sending messages.
+      message_to_send (str): The message to be sent by the server.
+      ```
+   - Run the client using
+      ```sh
+      python3 tcp_client.py --file_path ../config.yaml
+      ```
+
+   
 
 The Python client will establish a connection to the server and send messages.
 
