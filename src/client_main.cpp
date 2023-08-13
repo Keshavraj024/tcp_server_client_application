@@ -31,7 +31,7 @@ int main()
 
         if (endIndex == content.length())
             endIndex = 0;
-        const std::string messageToSend = tcpClient->createMessage(++messageId, content.substr(0, endIndex));
+        const std::string messageToSend = tcpClient->createMessage(messageId++, content.substr(0, endIndex));
 
         while (!tcpClient->sendMessage(messageToSend))
         {

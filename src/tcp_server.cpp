@@ -81,9 +81,11 @@ void TcpServer::listenForConnection()
         {
             perror("Accept Failed ");
             m_endConnection = true;
+            close(clientSocket);
         }
 
         handleClient(clientSocket);
+        close(clientSocket);
     }
 }
 
@@ -93,7 +95,7 @@ void TcpServer::handleClient(int clientSocket)
     while (!m_endConnection)
     {
         size_t messageSize;
-        
+
         recv(clientSocket, &messageSize, sizeof(messageSize), 0);
 
         std::cout << messageSize << std::endl;
@@ -104,6 +106,7 @@ void TcpServer::handleClient(int clientSocket)
         if (bytesRead <= 0)
         {
             perror("Client Disconnected ");
+            close(clientSocket);
             m_endConnection = true;
         }
 

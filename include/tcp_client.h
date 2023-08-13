@@ -38,7 +38,7 @@ public:
      *
      * @param messageId The unique identifier for the message.
      * @param content The content of the message to be included.
-     * @return A string representing the created message with the message ID and content.
+     * @return A string representing the created message with the message ID, timestamp and content.
      */
     std::string createMessage(size_t messageId, const std::string &content);
     /**

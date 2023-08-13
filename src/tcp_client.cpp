@@ -37,7 +37,7 @@ bool TcpClient::waitForServer(const std::unique_ptr<TcpClient> &client, size_t m
 std::string TcpClient::createMessage(size_t messageId, const std::string &content)
 {
     sr_test::Output out;
-    out.set_id(++messageId);
+    out.set_id(messageId);
 
     const auto now = std::chrono::system_clock::now();
     std::time_t timestamp = std::chrono::system_clock::to_time_t(now);
