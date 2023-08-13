@@ -14,16 +14,50 @@ class TcpClient:
             server_address = config["server"]["address"]
             server_port = config["server"]["port"]
             self.message_interval_ms = config["message_interval_ms"]
+            self.message_to_send = config["message_to_send"]
+            max_attempts = config["max_attempts"]
+            interval = config["interval"]
 
             # end index to slice the message at for variable lengths
             self.end_index = 0
-            self.message_to_send = config["message_to_send"]
-            self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.client_socket.connect((server_address, server_port))
+
+            self.init_connection(server_address, server_port, max_attempts, interval)
             self.send()
 
         except socket.error as e:
             logging.error(f"Error during initialization: {e}")
+
+    def init_connection(
+        self, server_address: str, server_port: int, max_attempts: int, interval: int
+    ) -> None:
+        """
+        Initialize a connection to the server with reconnection attempts.
+
+        This function attempts to establish a connection to the specified server address
+        and port. If the connection fails, it retries for a maximum number of attempts
+        with a specified interval between attempts.
+
+        Args:
+            server_address (str): The IP address or hostname of the server.
+            server_port (int): The port number of the server.
+            max_attempts (int): The maximum number of connection attempts.
+            interval (float): The time interval (in seconds) between connection attempts.
+
+        Returns:
+            bool: True if the connection is successfully established, False otherwise.
+        """
+        reconnection_attempts = 0
+        connection_successful = False
+
+        while reconnection_attempts < max_attempts and not connection_successful:
+            try:
+                self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                self.client_socket.connect((server_address, server_port))
+                connection_successful = True
+            except socket.error as e:
+                logging.error(f"Error during initialization: {e}. Retrying.....")
+                time.sleep(interval)
+                reconnection_attempts += 1
 
     def read_config(self, file_path: str) -> dict:
         """
@@ -54,7 +88,7 @@ class TcpClient:
 
         current_time = time.time()
         seconds = int(current_time)
-        nanoseconds = int((current_time - seconds) * 1e9)
+        nanoseconds = int((current_time - seconds) * 1e3)
 
         timestamp = Timestamp()
         timestamp.seconds = seconds
@@ -85,6 +119,7 @@ class TcpClient:
                 message_size = len(message_data)
                 self.client_socket.sendall(message_size.to_bytes(8, byteorder="little"))
                 self.client_socket.sendall(message_data)
+
                 logging.info(f"Sent message with ID: {message_id}")
                 message_id += 1
                 time.sleep(self.message_interval_ms / 1000)
