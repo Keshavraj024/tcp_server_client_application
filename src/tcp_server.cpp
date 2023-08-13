@@ -89,11 +89,18 @@ void TcpServer::listenForConnection()
 
 void TcpServer::handleClient(int clientSocket)
 {
-    char buffer[4096] = {0};
 
     while (!m_endConnection)
     {
-        int bytesRead = recv(clientSocket, buffer, sizeof(buffer), 0);
+        size_t messageSize;
+        
+        recv(clientSocket, &messageSize, sizeof(messageSize), 0);
+
+        std::cout << messageSize << std::endl;
+
+        char buffer[messageSize + 1];
+        int bytesRead = recv(clientSocket, buffer, messageSize, 0);
+
         if (bytesRead <= 0)
         {
             perror("Client Disconnected ");

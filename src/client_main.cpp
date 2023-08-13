@@ -4,19 +4,6 @@
 #include <yaml-cpp/yaml.h>
 #include "output.pb.h"
 
-bool waitForServer(const std::unique_ptr<TcpClient> &client, size_t maxAttempts, int interval)
-{
-    for (size_t attempt = 0; attempt < maxAttempts; attempt++)
-    {
-        if (client->clientConnect())
-        {
-            return true;
-        }
-        std::this_thread::sleep_for(std::chrono::seconds{interval});
-    }
-    return false;
-}
-
 int main()
 {
 
@@ -37,20 +24,24 @@ int main()
         tcpClient = std::make_unique<TcpClient>(serverAddress, serverPort);
 
     size_t messageId = 0;
+    int endIndex = 0;
 
     while (true)
     {
-        const std::string messageToSend = tcpClient->createMessage(++messageId, content);
+
+        if (endIndex == content.length())
+            endIndex = 0;
+        const std::string messageToSend = tcpClient->createMessage(++messageId, content.substr(0, endIndex));
 
         while (!tcpClient->sendMessage(messageToSend))
         {
-            if (!waitForServer(tcpClient, maxAttempts, interval))
+            if (!tcpClient->waitForServer(tcpClient, maxAttempts, interval))
             {
                 perror("Server not reachable. Exiting...");
                 return 1;
             }
         }
-
+        endIndex++;
         std::this_thread::sleep_for(std::chrono::milliseconds(messageIntervalMs));
     }
 }

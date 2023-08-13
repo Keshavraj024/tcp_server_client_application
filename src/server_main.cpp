@@ -3,6 +3,7 @@
 #include <thread>
 #include <fstream>
 #include <yaml-cpp/yaml.h>
+#include <memory>
 
 int main()
 {
@@ -20,10 +21,10 @@ int main()
 
     while (reconnectAttempts < maxAttempts)
     {
-        TcpServer server(serverPort);
-        if (server.startConnection())
+        std::unique_ptr<TcpServer> server = std::make_unique<TcpServer>(serverPort);
+        if (server->startConnection())
         {
-            server.listenForConnection();
+            server->listenForConnection();
         }
         else
         {
