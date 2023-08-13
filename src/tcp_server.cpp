@@ -16,14 +16,18 @@ TcpServer::~TcpServer()
 
 bool TcpServer::startConnection()
 {
-    std::cout << "Server started, listening for connections " << std::endl;
+    std::cout << "Server started, listening for incoming messages " << std::endl;
     m_serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+    
+    // Check if socket creation failed
     if (m_serverSocket == -1)
     {
         perror("Socket creation failed");
     }
 
     const int reuse = 1;
+
+    // Set socket option to reuse address
     if (setsockopt(m_serverSocket, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(int)) == -1)
     {
         perror("Failed to set socket option");
@@ -36,6 +40,7 @@ bool TcpServer::startConnection()
     serverAddr.sin_port = htons(m_port);
     serverAddr.sin_addr.s_addr = INADDR_ANY;
 
+    // Bind socket to the specified address and port
     if (bind(m_serverSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) == -1)
     {
         perror("Binding failed");
@@ -43,6 +48,7 @@ bool TcpServer::startConnection()
         return false;
     }
 
+    // Listen for incoming connections
     if (listen(m_serverSocket, 5) == -1)
     {
         perror("Listening failed ");
