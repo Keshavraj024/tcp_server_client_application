@@ -112,7 +112,7 @@ void TcpServer::handleClient(int clientSocket)
         {
             std::cout << "Received messagae: ";
             std::cout << "ID : " << receivedMessage.id() << std::endl;
-            std::cout << "Timestamp : " << receivedMessage.timestamp().seconds() << " s " << receivedMessage.timestamp().nanos() << " ns" << std::endl;
+            std::cout << "Timestamp : " << receivedMessage.timestamp().seconds() << "s " << receivedMessage.timestamp().nanos() << "ms" << std::endl;
             std::cout << "Content : " << receivedMessage.content() << std::endl;
         }
         else

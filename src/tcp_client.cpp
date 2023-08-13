@@ -34,6 +34,25 @@ bool TcpClient::waitForServer(const std::unique_ptr<TcpClient> &client, size_t m
     return false;
 }
 
+std::string TcpClient::createMessage(size_t messageId, const std::string &content)
+{
+    sr_test::Output out;
+    out.set_id(++messageId);
+
+    const auto now = std::chrono::system_clock::now();
+    std::time_t timestamp = std::chrono::system_clock::to_time_t(now);
+    google::protobuf::Timestamp *timestampProto = out.mutable_timestamp();
+    timestampProto->set_seconds(timestamp);
+    const int64_t nanos = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count() % 1000;
+    timestampProto->set_nanos(nanos);
+
+    out.set_content(content);
+
+    std::cout << "Sending Message ID " << messageId << std::endl;
+
+    return out.SerializeAsString();
+}
+
 bool TcpClient::clientConnect()
 {
     m_clientSocket = socket(AF_INET, SOCK_STREAM, 0);
@@ -61,25 +80,6 @@ bool TcpClient::clientConnect()
     }
 
     return true;
-}
-
-std::string TcpClient::createMessage(size_t messageId, const std::string &content)
-{
-    sr_test::Output out;
-    out.set_id(++messageId);
-
-    const auto now = std::chrono::system_clock::now();
-    std::time_t timestamp = std::chrono::system_clock::to_time_t(now);
-    google::protobuf::Timestamp *timestampProto = out.mutable_timestamp();
-    timestampProto->set_seconds(timestamp);
-    const int64_t nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch()).count() % 1000000000;
-    timestampProto->set_nanos(nanos);
-
-    out.set_content(content);
-
-    std::cout << "Sending Message ID " << messageId << std::endl;
-
-    return out.SerializeAsString();
 }
 
 bool TcpClient::sendMessage(const std::string &messageToSend)
