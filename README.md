@@ -7,6 +7,7 @@ This repository contains an example implementation of a TCP client-server commun
 - [Protobuf](https://developers.google.com/protocol-buffers)
 - [yaml-cpp](https://github.com/jbeder/yaml-cpp)
 - [gtest](https://github.com/google/googletest)
+- Python dependencies are included in requirements.txt
 
 ## Install the dependencies
 
