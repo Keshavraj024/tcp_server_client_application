@@ -8,7 +8,7 @@
 #include "tcp_client.h"
 #include "output.pb.h"
 
-TcpClient::TcpClient(const std::string &serverAddress, const size_t &serverPort)
+TcpClient::TcpClient(const std::string &serverAddress, size_t serverPort)
     : m_clientSocket{-1}, m_serverAddress{serverAddress}, m_serverPort{serverPort}
 {
 }
@@ -48,6 +48,25 @@ bool TcpClient::clientConnect()
     }
 
     return true;
+}
+
+std::string TcpClient::createMessage(size_t messageId, const std::string &content)
+{
+    sr_test::Output out;
+    out.set_id(++messageId);
+
+    const auto now = std::chrono::system_clock::now();
+    std::time_t timestamp = std::chrono::system_clock::to_time_t(now);
+    google::protobuf::Timestamp *timestampProto = out.mutable_timestamp();
+    timestampProto->set_seconds(timestamp);
+    const int64_t nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch()).count() % 1000000000;
+    timestampProto->set_nanos(nanos);
+
+    out.set_content(content);
+
+    std::cout << "Sending Message ID " << messageId << std::endl;
+
+    return out.SerializeAsString();
 }
 
 bool TcpClient::sendMessage(const std::string &messageToSend)

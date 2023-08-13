@@ -16,7 +16,7 @@ public:
      * @brief Constructor for TcpServer.
      * @param port The port number to listen on.
      */
-    TcpServer(const size_t &);
+    TcpServer(size_t port);
     /**
      * @brief Destructor for TcpServer.
      */
@@ -44,7 +44,7 @@ private:
      * @brief Handles communication with a connected client.
      * @param clientSocket The socket descriptor for the connected client.
      */
-    void handleClient(const int &clientSocket);
+    void handleClient(int clientSocket);
 };
 
 #endif

@@ -15,7 +15,7 @@ public:
      * @param serverAddress The IP address or hostname of the server to connect to.
      * @param serverPort The port number of the server to connect to.
      */
-    TcpClient(const std::string &serverAddress, const size_t &serverPort);
+    TcpClient(const std::string &serverAddress, size_t serverPort);
     /**
      * @brief Destructor for TcpClient.
      */
@@ -31,6 +31,7 @@ public:
      * @return True if the message is sent successfully, false otherwise.
      */
     bool sendMessage(const std::string &message);
+    std::string createMessage(size_t messageId, const std::string &content);
 
 private:
     int m_clientSocket;          ///< The socket descriptor for the client socket.

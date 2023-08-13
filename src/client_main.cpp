@@ -4,7 +4,7 @@
 #include <yaml-cpp/yaml.h>
 #include "output.pb.h"
 
-bool waitForServer(const std::unique_ptr<TcpClient> &client, const size_t &maxAttempts, const int &interval)
+bool waitForServer(const std::unique_ptr<TcpClient> &client, size_t maxAttempts, int interval)
 {
     for (size_t attempt = 0; attempt < maxAttempts; attempt++)
     {
@@ -31,6 +31,7 @@ int main()
     const int interval = config["interval"].as<int>();
     const int maxAttempts = config["max_attempts"].as<int>();
     const int messageIntervalMs = config["message_interval_ms"].as<int>();
+    const std::string content = config["message_to_send"].as<std::string>();
 
     std::unique_ptr<TcpClient>
         tcpClient = std::make_unique<TcpClient>(serverAddress, serverPort);
@@ -39,22 +40,7 @@ int main()
 
     while (true)
     {
-        sr_test::Output out;
-        out.set_id(++messageId);
-
-        const auto now = std::chrono::system_clock::now();
-        std::time_t timestamp = std::chrono::system_clock::to_time_t(now);
-        google::protobuf::Timestamp *timestampProto = out.mutable_timestamp();
-        timestampProto->set_seconds(timestamp);
-        const int64_t nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch()).count() % 1000000000;
-        timestampProto->set_nanos(nanos);
-
-        const std::string content = "Hello, Seoul Robotics ";
-        out.set_content(content);
-
-        std::cout << "Sending Message ID " << messageId << std::endl;
-
-        const std::string messageToSend = out.SerializeAsString();
+        const std::string messageToSend = tcpClient->createMessage(++messageId, content);
 
         while (!tcpClient->sendMessage(messageToSend))
         {

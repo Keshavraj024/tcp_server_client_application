@@ -4,7 +4,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-TcpServer::TcpServer(const size_t &port)
+TcpServer::TcpServer(size_t port)
     : m_port{port}, m_serverSocket{-1}
 {
 }
@@ -18,11 +18,12 @@ bool TcpServer::startConnection()
 {
     std::cout << "Server started, listening for incoming messages " << std::endl;
     m_serverSocket = socket(AF_INET, SOCK_STREAM, 0);
-    
+
     // Check if socket creation failed
     if (m_serverSocket == -1)
     {
         perror("Socket creation failed");
+        return false;
     }
 
     const int reuse = 1;
@@ -86,7 +87,7 @@ void TcpServer::listenForConnection()
     }
 }
 
-void TcpServer::handleClient(const int &clientSocket)
+void TcpServer::handleClient(int clientSocket)
 {
     char buffer[4096] = {0};
 
