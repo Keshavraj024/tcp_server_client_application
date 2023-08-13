@@ -46,6 +46,9 @@ To build the TCP client-server example, follow these steps:
 
 ### Server
 
+- The server will start listening for incoming connections on the specified port.
+- Once a client connects, the server will handle incoming messages and display their content.
+
 To run the server, execute the following command from the build directory:
 
 ```sh
@@ -61,7 +64,10 @@ To run the client, execute the following command from the build directory:
 ```sh
 ./client
 ```
-The client will connect to the server and send messages.
+
+- Replace <server_address> with the IP address or hostname of the server you want to connect to.
+- Replace <server_port> with the port number the server is listening on.
+- The client will attempt to connect to the server and send messages.
 ### Client (Python)
 
 You can also establish a heterogeneous connection using a Python client. An example Python client can be found in the `python_client` directory. To run the Python client, follow these steps:
