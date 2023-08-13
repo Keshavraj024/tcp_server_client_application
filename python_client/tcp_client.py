@@ -13,6 +13,7 @@ class TcpClient:
             config = self.read_config(file_path)
             server_address = config["server"]["address"]
             server_port = config["server"]["port"]
+            self.message_to_send = config["message_to_send"]
             self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.client_socket.connect((server_address, server_port))
             self.send()
@@ -55,7 +56,7 @@ class TcpClient:
         timestamp.nanos = nanoseconds
         sr_test_output.timestamp.CopyFrom(timestamp)
 
-        sr_test_output.content = "Hello from Project Engineer Seoul Robotics"
+        sr_test_output.content = self.message_to_send
 
         sr_test_output_serialized = sr_test_output.SerializeToString()
 
@@ -92,7 +93,10 @@ if __name__ == "__main__":
         description="TCP Client for sending messages to server."
     )
     parser.add_argument(
-        "--file_path", type=str, default="../config.yaml", help="Path to YAML configuration file"
+        "--file_path",
+        type=str,
+        default="../config.yaml",
+        help="Path to YAML configuration file",
     )
     args = parser.parse_args()
 
