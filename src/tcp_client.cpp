@@ -21,6 +21,19 @@ TcpClient::~TcpClient()
     }
 }
 
+bool TcpClient::waitForServer(const std::unique_ptr<TcpClient> &client, size_t maxAttempts, int interval)
+{
+    for (size_t attempt = 0; attempt < maxAttempts; attempt++)
+    {
+        if (client->clientConnect())
+        {
+            return true;
+        }
+        std::this_thread::sleep_for(std::chrono::seconds{interval});
+    }
+    return false;
+}
+
 bool TcpClient::clientConnect()
 {
     m_clientSocket = socket(AF_INET, SOCK_STREAM, 0);
@@ -73,7 +86,7 @@ bool TcpClient::sendMessage(const std::string &messageToSend)
 {
     size_t messageSize = messageToSend.size();
 
-    if (send(m_clientSocket, messageToSend.c_str(), messageSize, 0) == -1)
+    if (send(m_clientSocket, &messageSize, sizeof(messageSize), 0) == -1 || send(m_clientSocket, messageToSend.c_str(), messageSize, 0) == -1)
     {
         close(m_clientSocket);
         return false;

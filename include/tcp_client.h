@@ -2,6 +2,7 @@
 #define __TCP_CLIENT_H__
 
 #include <string>
+#include <memory>
 
 /**
  * @class TcpClient
@@ -40,6 +41,19 @@ public:
      * @return A string representing the created message with the message ID and content.
      */
     std::string createMessage(size_t messageId, const std::string &content);
+    /**
+     * Wait for the server connection with retries.
+     *
+     * This function waits for a successful connection to the server using the provided TcpClient instance,
+     * attempting connection with retries. It will make multiple connection attempts with a specified
+     * interval between attempts.
+     *
+     * @param client A unique pointer to the TcpClient instance used for connection.
+     * @param maxAttempts The maximum number of connection attempts to be made.
+     * @param interval The time interval in seconds between connection attempts.
+     * @return True if the connection to the server is successful, false otherwise.
+     */
+    bool waitForServer(const std::unique_ptr<TcpClient> &client, size_t maxAttempts, int interval);
 
 private:
     int m_clientSocket;          ///< The socket descriptor for the client socket.
