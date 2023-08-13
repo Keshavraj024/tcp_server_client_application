@@ -76,10 +76,10 @@ class TcpClient:
                 config = yaml.safe_load(config_file)
                 return config
         except FileNotFoundError:
-            print("Error: Config file not found:", file_path)
+            logging.error(f"Config file not found: {file_path}")
             return None
         except yaml.YAMLError as e:
-            print(f"Error while reading config: {e}")
+            logging.error(f"Error while reading config: {e}")
             return None
 
     def create_message(self, message_id: int) -> bytes:
