@@ -11,6 +11,8 @@ class TcpClient:
     def __init__(self, file_path=str) -> None:
         try:
             config = self.read_config(file_path)
+            if not config:
+                return
             server_address = config["server"]["address"]
             server_port = config["server"]["port"]
             self.message_interval_ms = config["message_interval_ms"]
@@ -69,9 +71,16 @@ class TcpClient:
         Returns:
             dict: Dictionary containing the configuration data.
         """
-        with open(file_path, "r") as config_file:
-            config = yaml.safe_load(config_file)
-        return config
+        try:
+            with open(file_path, "r") as config_file:
+                config = yaml.safe_load(config_file)
+                return config
+        except FileNotFoundError:
+            print("Error: Config file not found:", file_path)
+            return None
+        except yaml.YAMLError as e:
+            print(f"Error while reading config: {e}")
+            return None
 
     def create_message(self, message_id: int) -> bytes:
         """
