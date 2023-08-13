@@ -137,8 +137,8 @@ You can verify the simple tests both the TcpServer and TcpClient classes using G
 
 | Pros | Cons |
 |----------|----------|
-| Efficiency and Performance: Using C++ for your server and client allows you to leverage its low-level memory management and performance optimizations, making the application more efficient and responsive. |Resource Usage: Handling multiple clients concurrently can lead to resource-intensive operations, such as managing threads or handling asynchronous events. Proper management is required to avoid resource exhaustion.  |
-|Efficient Serialization: Protocol Buffers provide efficient serialization and deserialization of data, which can lead to faster communication compared to plaintext serialization formats. | Protocol Evolution: If you need to evolve your message format over time, you'll need to manage backward and forward compatibility to ensure old and new versions of your application can still communicate.| 
+| Efficient Performance: Using C++ for your server and client allows you to leverage its low-level memory management and performance optimizations, making the application more efficient and responsive. |Resource Usage: Handling multiple clients concurrently can lead to resource-intensive operations, such as managing threads or handling asynchronous events. Proper management is required to avoid resource exhaustion.  |
+|Efficient Serialization/Deserialization: Protocol Buffers provide efficient serialization and deserialization of data, which can lead to faster communication compared to plaintext serialization formats. | Protocol Evolution: If you need to evolve your message format over time, you'll need to manage backward and forward compatibility to ensure old and new versions of your application can still communicate.| 
 
 # References
 - [Cmake Function](https://cmake.org/cmake/help/latest/command/function.html)
