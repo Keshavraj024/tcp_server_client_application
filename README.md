@@ -50,7 +50,7 @@ To build the TCP client-server example, follow these steps:
 - The server will start listening for incoming connections on the specified port.
 - Once a client connects, the server will handle incoming messages and display their content.
 
-To run the server, execute the following command from the build directory:
+To run the server, execute the following command from the build directory and can also optionally set the file path:
 
 ```sh
 ./server
@@ -60,7 +60,7 @@ The server will start listening for incoming connections.
 
 ### Client (C++)
 
-To run the client, execute the following command from the build directory:
+To run the client, execute the following command from the build directory and can also optionally set the file path:
 
 ```sh
 ./client
@@ -106,7 +106,6 @@ You can also establish a heterogeneous connection using a Python client. An exam
       ```
 
    
-
 The Python client will establish a connection to the server and send messages.
 
 ## Configuration
@@ -140,12 +139,6 @@ You can verify the simple tests both the TcpServer and TcpClient classes using G
 ```
    ctest
 ```
-
-
-| Pros | Cons |
-|----------|----------|
-| Efficient Performance: Using C++ for your server and client allows you to leverage its low-level memory management and performance optimizations, making the application more efficient and responsive. |Resource Usage: Handling multiple clients concurrently can lead to resource-intensive operations, such as managing threads or handling asynchronous events. Proper management is required to avoid resource exhaustion.  |
-|Efficient Serialization/Deserialization: Protocol Buffers provide efficient serialization and deserialization of data, which can lead to faster communication compared to plaintext serialization formats. | Protocol Evolution: If you need to evolve your message format over time, you'll need to manage backward and forward compatibility to ensure old and new versions of your application can still communicate.| 
 
 # References
 - [Cmake Function](https://cmake.org/cmake/help/latest/command/function.html)
